@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>maaf ya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#4b4a47; --blue:#3f78d6; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;background:#a5cbe8}
+  body.kecil, body.kecil *{text-transform:lowercase}
+  .hidden{display:none!important}
+
+  /* ---------- adegan ---------- */
+  .scene{
+    position:fixed;inset:0;overflow:hidden;display:grid;place-items:center;
+    background:
+      radial-gradient(ellipse 70% 38% at 88% 82%,rgba(255,255,255,.7),transparent 70%),
+      radial-gradient(ellipse 60% 30% at 8% 18%,rgba(255,255,255,.35),transparent 70%),
+      linear-gradient(180deg,#bcd9ef 0%,#a5cbe8 60%,#92bde2 100%);
+  }
+  .star{position:absolute;color:#4f86c4;opacity:.38;pointer-events:none;line-height:1}
+
+  .stage{position:relative;width:min(86vw,360px);margin-top:9vh}
+  .sheet{filter:drop-shadow(0 8px 10px rgba(40,80,130,.28))}
+  .paper{
+    background:#fcf8ee;min-height:min(46vh,340px);padding:34px 30px 40px;
+    font-family:'Special Elite',monospace;color:var(--ink);font-size:.82rem;line-height:1.75;
+  }
+  .paper .salam{font-size:.9rem;margin:0 0 14px}
+  .paper p{margin:0 0 12px}
+  .c{opacity:0}.c.on{opacity:1}
+
+  /* penjepit */
+  .clip{
+    position:absolute;left:-16px;top:20px;width:60px;height:30px;border-radius:9px 9px 6px 6px;
+    background:linear-gradient(180deg,#d3edf8,#a8d3ea);transform:rotate(-24deg);
+    box-shadow:0 3px 6px rgba(40,80,130,.3),inset 0 -3px 0 rgba(0,0,0,.06);
+    display:grid;place-items:center;font-family:'Dancing Script',cursive;font-size:.85rem;color:#4a78a8;z-index:2;
+  }
+  .clip::before{content:"";position:absolute;left:9px;right:9px;top:-10px;height:15px;border:3px solid #e1ecf1;border-bottom:0;border-radius:10px 10px 0 0}
+
+  /* liontin */
+  .locket{
+    position:absolute;right:-16px;top:-50px;width:104px;z-index:3;
+    transform-origin:50% -320px;animation:sway 5s ease-in-out infinite;
+  }
+  .locket svg{display:block;width:100%;overflow:visible;filter:drop-shadow(0 6px 6px rgba(40,80,130,.35))}
+  .locket::before{
+    content:"";position:absolute;left:50%;bottom:calc(100% - 2px);width:2px;height:140vh;margin-left:-1px;
+    background:repeating-linear-gradient(180deg,#e4e8ec 0 4px,#8f98a3 4px 6px);
+  }
+  .locket.pop svg{animation:pop .5s ease}
+  @keyframes sway{0%,100%{transform:rotate(-2.2deg)}50%{transform:rotate(2.2deg)}}
+  @keyframes pop{40%{transform:scale(.93)}}
+
+  /* stiker */
+  .sticker{
+    position:absolute;z-index:2;line-height:1;pointer-events:none;
+    filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 5px 6px rgba(40,80,130,.35));
+  }
+  .sticker.a{left:-24px;bottom:-34px;font-size:58px}
+  .sticker.b{left:-30px;bottom:22px;font-size:46px;transform:rotate(-12deg)}
+  .sticker img{width:68px;border:3px solid #fff;border-radius:12px;display:block}
+
+  /* tombol next */
+  .next{
+    position:absolute;right:-12px;bottom:-14px;width:44px;height:44px;border-radius:50%;border:0;padding:0;z-index:4;
+    background:radial-gradient(circle at 35% 30%,#6d9be8,var(--blue));cursor:pointer;
+    box-shadow:0 5px 10px rgba(30,60,130,.4);display:grid;place-items:center;
+  }
+  .next svg{width:26px;height:26px}
+  .next.ready{animation:nudge 1.7s ease-in-out infinite}
+  @keyframes nudge{50%{transform:scale(1.12)}}
+  .next:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+  .dots{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0));left:0;right:0;display:flex;justify-content:center;gap:8px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:rgba(60,100,160,.3);transition:background .3s,transform .3s}
+  .dots i.on{background:#3a6db3;transform:scale(1.25)}
+
+  /* ---------- tirai ---------- */
+  .curtain{position:fixed;inset:0;z-index:50;overflow:hidden}
+  .curtain.open{pointer-events:none}
+  .panel{
+    position:absolute;top:0;bottom:0;width:50.6%;will-change:transform;backface-visibility:hidden;
+    background-color:#2d6fb3;
+    background-image:
+      linear-gradient(180deg,rgba(10,40,90,.55),transparent 18%,transparent 82%,rgba(10,40,90,.4)),
+      linear-gradient(90deg,#235f9f 0%,#6fb4ea 26%,#3b86c9 48%,#1f5a98 72%,#5ea8e2 100%);
+    background-size:100% 100%,96px 100%;
+  }
+  .panel.l{left:0;background-position:0 0,100% 0}
+  .panel.r{right:0;background-position:0 0,0 0}
+  .panel::after{content:"";position:absolute;top:0;bottom:0;width:3px;background:rgba(255,255,255,.35)}
+  .panel.l::after{right:0}.panel.r::after{left:0}
+
+  .open-label{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;z-index:2;
+    font-family:'Special Elite',monospace;font-size:.95rem;letter-spacing:.08em;text-align:center;
+    text-shadow:0 2px 8px rgba(10,40,90,.6);animation:blink 2.6s ease-in-out infinite;transition:opacity .5s;white-space:nowrap;
+  }
+  .open-label.off{opacity:0;animation:none}
+  @keyframes blink{50%{opacity:.45}}
+
+  .ending{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity 1.2s ease;z-index:3}
+  .ending.show{opacity:1}
+  .heart{position:relative;width:min(92vw,420px)}
+  .heart svg{display:block;width:100%;transform:scale(.7);transition:transform 1.6s cubic-bezier(.2,.8,.2,1)}
+  .ending.show .heart svg{transform:scale(1);animation:beat 2.8s ease-in-out 1.8s infinite}
+  @keyframes beat{50%{transform:scale(1.045)}}
+  .words{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:80%;text-align:center;
+    font-family:'Dancing Script',cursive;font-size:clamp(1.5rem,7.4vw,2.3rem);line-height:1.2;color:#4a7fc6;
+    text-shadow:0 0 10px rgba(255,255,255,.95),0 1px 2px rgba(255,255,255,.9);clip-path:inset(0 100% 0 0);
+  }
+  .ending.show .words{animation:write 2.6s linear .9s forwards}
+  @keyframes write{to{clip-path:inset(0 0 0 0)}}
+  .replay{
+    position:absolute;bottom:calc(26px + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%);z-index:4;
+    border:0;background:rgba(255,255,255,.25);color:#fff;font:inherit;font-family:'Special Elite',monospace;font-size:.85rem;
+    padding:10px 18px;border-radius:99px;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  }
+
+  .music{
+    position:fixed;top:calc(12px + env(safe-area-inset-top,0));left:12px;z-index:60;width:42px;height:42px;border-radius:50%;
+    border:0;background:rgba(255,255,255,.7);font-size:1.1rem;cursor:pointer;box-shadow:0 4px 12px rgba(30,70,130,.25);
+  }
+  .music.playing{animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media (prefers-reduced-motion:reduce){.locket,.open-label,.next.ready,.music{animation:none!important}}
+</style>
+</head>
+<body>
+<audio id="bgm" loop preload="auto"></audio>
+<button class="music hidden" id="musicBtn" aria-label="putar atau jeda lagu">🎵</button>
+
+<div class="scene" id="scene">
+  <div class="stage" id="stageEl">
+    <div class="sheet"><div class="paper" id="paper"><p class="salam" id="salam"></p><div id="body"></div></div></div>
+    <div class="clip" id="clip"></div>
+    <div class="sticker b" id="stB"></div>
+    <div class="sticker a" id="stA"></div>
+
+    <div class="locket" id="locket">
+      <svg viewBox="0 0 100 92" aria-hidden="true">
+        <defs>
+          <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f7f9fb"/><stop offset=".3" stop-color="#aab3bd"/>
+            <stop offset=".55" stop-color="#f1f3f5"/><stop offset="1" stop-color="#8b95a0"/>
+          </linearGradient>
+          <clipPath id="hc"><path transform="translate(9 9) scale(.82)" d="M50 86 C10 58 -2 30 14 14 C28 0 46 8 50 22 C54 8 72 0 86 14 C102 30 90 58 50 86Z"/></clipPath>
+        </defs>
+        <circle cx="50" cy="4" r="5" fill="none" stroke="url(#silver)" stroke-width="2.4"/>
+        <path d="M50 86 C10 58 -2 30 14 14 C28 0 46 8 50 22 C54 8 72 0 86 14 C102 30 90 58 50 86Z" fill="#cfd6dd" transform="translate(9 9) scale(.82)"/>
+        <image id="lockImg" x="0" y="0" width="100" height="92" preserveAspectRatio="xMidYMid slice" clip-path="url(#hc)"/>
+        <path d="M50 86 C10 58 -2 30 14 14 C28 0 46 8 50 22 C54 8 72 0 86 14 C102 30 90 58 50 86Z" fill="none" stroke="url(#silver)" stroke-width="9" stroke-linejoin="round"/>
+        <path d="M50 86 C10 58 -2 30 14 14 C28 0 46 8 50 22 C54 8 72 0 86 14 C102 30 90 58 50 86Z" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width=".8" stroke-dasharray="1.6 2.6" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <button class="next" id="nextBtn" aria-label="lanjut">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.2" stroke-dasharray="2.4 2.2"/>
+        <path d="M7.5 7.5l9 9M16.5 7.5l-9 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-dasharray="2.6 2.2" fill="none"/>
+      </svg>
+    </button>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+
+<div class="curtain" id="curtain">
+  <div class="panel l" id="panelL"></div><div class="panel r" id="panelR"></div>
+  <div class="open-label" id="openLabel"></div>
+  <div class="ending" id="ending">
+    <div class="heart">
+      <svg viewBox="0 0 100 92" aria-hidden="true">
+        <defs><filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3.2"/></filter></defs>
+        <path d="M50 86 C10 58 -2 30 14 14 C28 0 46 8 50 22 C54 8 72 0 86 14 C102 30 90 58 50 86Z" fill="#fff" fill-opacity=".93" filter="url(#soft)"/>
+      </svg>
+      <div class="words" id="words"></div>
+    </div>
+  </div>
+  <button class="replay hidden" id="replay"></button>
+</div>
+
+<script>
+/* =====================================================
+   ✏️ EDIT BAGIAN INI SAJA
+   ===================================================== */
+const CONFIG = {
+  semuaHurufKecil: true,          // true = semua tulisan jadi huruf kecil
+  nama: "sayang",                 // panggilan dia
+
+  // Lagu (mp3 di repo, sebaris dengan file ini)
+  lagu: "lagu.mp3",
+  volume: 1,                      // 0 sampai 1
+  penguat: 2.5,                   // booster: 1 = mati, 2-3 = lebih keras (kalau pecah, turunin)
+  mulaiDetik: 0,
+
+  teksBuka: "click here to open", // tulisan di tirai
+  salam: "dear {nama},",          // pembuka surat
+  labelKlip: "dari aku",          // tulisan di penjepit biru
+
+  // Stiker di pojok kiri bawah: boleh emoji atau nama file gambar (misal "stiker.png"). Kosongkan "" kalau nggak mau.
+  stiker: "🐱",
+  stiker2: "⚽",
+
+  kecepatanKetik: 38,             // huruf per detik (makin besar makin cepat)
+
+  // Isi surat. Tiap { } = satu halaman. "foto" = foto yang muncul di liontin halaman itu.
+  // "teks" = daftar paragraf. Boleh tambah/kurangi halaman.
+  halaman: [
+    {
+      foto: "foto1.jpg",
+      teks: [
+        "haii sayanggg inii akuu cowooo yanggg buattt kamuuu keselll dannn badmoodd, maafff yaaa akuuu sudaaa buattt kamuuu badmooddd karnaaa halll kemarinnn.",
+        "akuuu mintaaa maafff karnaaa sebelummnyaaa sudaaa berbuattt salahhh diii hariii sebelummnyaaa, akuuu harusssnyaaa enggaaa berlebihannn maaffinnn akuuu yaaa"
+      ]
+    },
+    {
+      foto: "foto2.jpg",
+      teks: [
+        "akuuu sediii kalooo kitaaa berantemmm giniii, mauuu gimanaaa punnn iniii salahhnyaaa akuuu akuuu terlaluuu banyaaa buattt kesalahannn, akuuu mintaaa maafff yaaa sayangggg akuuu egoisss",
+        "untukkk ituuu semuaaa akuuu bakalll lebiii hatiii hatiiii enggaaa sembaranggg ngomonggg, ouuu iyaaa akuuu selaluuu buattt kamuuu sediii mungkinnn kedepannyaaa akuuu bakalll berusahaaa enggaaa begituju lagiii"
+      ]
+    },
+    {
+      foto: "foto3.jpg",
+      teks: [
+        "akuuu cumaaa mauuu buattt kamuuu senenggg tapiii mungkinnn caraaa akuuu salahhh, ehehee akuuu sadarrr oranggg kayaaa akuuu cumaaa bisaa berbuattt kesalahannn, untukkk ituuu semuaaa tolonggg beriii akuuu kesempatann yaaa akuuh mintaaa maafff sudaaa buattt kamuuu bersediii dimalammm hariiii, akuuu mintaaa maafff, semogaaa kamuuu mauuu maaffinnn akuuu",
+        "akuuuu sayanggg kamuuuu."
+      ]
+    }
+  ],
+
+  penutup: "i'm sorry, i love u :(",   // tulisan di hati bercahaya
+  tombolUlang: "buka lagi"
+};
+/* ===================================================== */
+
+const $ = id => document.getElementById(id);
+const fill = s => String(s).replace(/\{nama\}/g, CONFIG.nama);
+if (CONFIG.semuaHurufKecil) document.body.classList.add('kecil');
+
+/* ---------- teks tetap ---------- */
+$('salam').textContent = fill(CONFIG.salam);
+$('clip').textContent = fill(CONFIG.labelKlip);
+$('openLabel').textContent = fill(CONFIG.teksBuka);
+$('words').textContent = fill(CONFIG.penutup);
+$('replay').textContent = fill(CONFIG.tombolUlang);
+
+function sticker(el, v){
+  if (!v) { el.remove(); return; }
+  if (/\.(png|jpe?g|gif|webp|svg)$/i.test(v)) { const i = new Image(); i.src = v; i.alt = ''; el.appendChild(i); }
+  else el.textContent = v;
+}
+sticker($('stA'), CONFIG.stiker);
+sticker($('stB'), CONFIG.stiker2);
+
+/* ---------- bintang-bintang ---------- */
+[[8,10,18],[22,6,11],[70,8,15],[90,22,10],[6,38,12],[94,48,17],[12,64,20],[88,70,12],[30,90,14],[62,93,11],[48,4,10],[4,84,13]].forEach(([x,y,s]) => {
+  const e = document.createElement('span');
+  e.className = 'star'; e.textContent = '★';
+  e.style.cssText = `left:${x}%;top:${y}%;font-size:${s}px;transform:rotate(${(x*7)%50-25}deg)`;
+  $('scene').appendChild(e);
+});
+
+/* ---------- kertas bergerigi (perangko) ---------- */
+const paper = $('paper');
+function stampPath(w, h){
+  const nx = Math.max(4, Math.round(w / 18)), ny = Math.max(4, Math.round(h / 18));
+  const lx = w / nx, ly = h / ny, rx = lx * .2, ry = ly * .2;
+  let d = 'M0 0';
+  for (let i = 0; i < nx; i++) { const x = i * lx; d += ` L${x+lx*.3} 0 A${rx} ${rx} 0 0 0 ${x+lx*.7} 0 L${x+lx} 0`; }
+  for (let j = 0; j < ny; j++) { const y = j * ly; d += ` L${w} ${y+ly*.3} A${ry} ${ry} 0 0 0 ${w} ${y+ly*.7} L${w} ${y+ly}`; }
+  for (let i = nx; i > 0; i--) { const x = i * lx; d += ` L${x-lx*.3} ${h} A${rx} ${rx} 0 0 0 ${x-lx*.7} ${h} L${x-lx} ${h}`; }
+  for (let j = ny; j > 0; j--) { const y = j * ly; d += ` L0 ${y-ly*.3} A${ry} ${ry} 0 0 0 0 ${y-ly*.7} L0 ${y-ly}`; }
+  return d + ' Z';
+}
+function clipPaper(){
+  paper.style.clipPath = `path('${stampPath(paper.offsetWidth, paper.offsetHeight)}')`;
+}
+new ResizeObserver(clipPaper).observe(paper);
+
+/* ---------- halaman surat ---------- */
+const H = CONFIG.halaman;
+const dots = $('dots');
+H.forEach(() => dots.appendChild(document.createElement('i')));
+let page = 0, chars = [], typed = 0, typing = false, typeT = null;
+let started = false, closing = false;
+
+function setLocket(src){
+  const img = $('lockImg');
+  img.style.display = '';
+  if (src) { const t = new Image(); t.onerror = () => img.style.display = 'none'; t.src = src; }
+  img.setAttribute('href', src || '');
+  if (!src) img.style.display = 'none';
+  const l = $('locket'); l.classList.remove('pop'); void l.offsetWidth; l.classList.add('pop');
+}
+function build(i){
+  const body = $('body'); body.replaceChildren(); chars = [];
+  H[i].teks.forEach(t => {
+    const p = document.createElement('p');
+    fill(t).split('').forEach(ch => { const s = document.createElement('span'); s.className = 'c'; s.textContent = ch; p.appendChild(s); chars.push(s); });
+    body.appendChild(p);
+  });
+  [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+  setLocket(H[i].foto);
+  $('nextBtn').classList.remove('ready');
+  typed = 0; typing = false;
+}
+function startTyping(delay){
+  clearTimeout(typeT); typing = true;
+  const per = 1000 / CONFIG.kecepatanKetik;
+  const tick = () => {
+    if (typed >= chars.length) { typing = false; $('nextBtn').classList.add('ready'); return; }
+    const c = chars[typed++]; c.classList.add('on');
+    typeT = setTimeout(tick, /[.,!?]/.test(c.textContent) ? per * 5 : per);
+  };
+  typeT = setTimeout(tick, delay || 0);
+}
+function finishTyping(){
+  clearTimeout(typeT); chars.forEach(c => c.classList.add('on')); typed = chars.length; typing = false;
+  $('nextBtn').classList.add('ready');
+}
+build(0);
+
+$('nextBtn').onclick = () => {
+  if (!started || closing) return;
+  if (typing) { finishTyping(); return; }
+  if (page < H.length - 1) { page++; build(page); startTyping(250); }
+  else finish();
+};
+
+/* ---------- tirai ---------- */
+function moveCurtain(open){
+  const o = { duration: 2400, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' };
+  const a = open ? 0 : -102, b = open ? -102 : 0;
+  const f = (x) => [{ transform: `translate3d(${x[0]}%,0,0)` }, { transform: `translate3d(${x[1]}%,0,0)` }];
+  $('panelL').animate(f([a, b]), o);
+  $('panelR').animate(f([-a, -b]), o);
+  $('curtain').classList.toggle('open', open);
+}
+$('curtain').addEventListener('click', e => {
+  if (started || e.target.closest('.replay')) return;
+  started = true;
+  startMusic();
+  $('openLabel').classList.add('off');
+  requestAnimationFrame(() => requestAnimationFrame(() => moveCurtain(true)));
+  startTyping(1700);
+});
+
+function finish(){
+  closing = true;
+  moveCurtain(false);
+  setTimeout(() => $('ending').classList.add('show'), 2300);
+  setTimeout(() => $('replay').classList.remove('hidden'), 6500);
+}
+$('replay').onclick = () => {
+  $('replay').classList.add('hidden');
+  $('ending').classList.remove('show');
+  page = 0; build(0);
+  moveCurtain(true);
+  closing = false;
+  startTyping(1700);
+};
+
+/* ---------- musik ---------- */
+const bgm = $('bgm'), musicBtn = $('musicBtn');
+function setPlaying(on){ musicBtn.classList.toggle('playing', on); musicBtn.textContent = on ? '🎵' : '🔇'; }
+let actx = null;
+function boost(){
+  if (actx || !(CONFIG.penguat > 1)) return;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    actx = new AC();
+    const src = actx.createMediaElementSource(bgm);
+    const gain = actx.createGain(); gain.gain.value = CONFIG.penguat;
+    const comp = actx.createDynamicsCompressor();
+    comp.threshold.value = -8; comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.2;
+    src.connect(gain); gain.connect(comp); comp.connect(actx.destination);
+  } catch(e) { actx = null; }
+}
+function wake(){ if (actx && actx.state === 'suspended') actx.resume(); }
+if (CONFIG.lagu) {
+  bgm.src = CONFIG.lagu;
+  musicBtn.onclick = () => {
+    if (bgm.paused) { wake(); bgm.volume = CONFIG.volume; bgm.play().then(() => setPlaying(true)).catch(() => {}); }
+    else { bgm.pause(); setPlaying(false); }
+  };
+}
+function startMusic(){
+  if (!CONFIG.lagu) return;
+  boost(); wake();
+  musicBtn.classList.remove('hidden');
+  try { bgm.currentTime = CONFIG.mulaiDetik || 0; } catch(e) {}
+  bgm.volume = 0;
+  bgm.play().then(() => {
+    setPlaying(true);
+    let v = 0;
+    const t = setInterval(() => {
+      v = Math.min(CONFIG.volume, v + CONFIG.volume / 16);
+      bgm.volume = v;
+      if (v >= CONFIG.volume) clearInterval(t);
+    }, 70);
+  }).catch(() => setPlaying(false));
+}
+</script>
+</body>
+</html>
